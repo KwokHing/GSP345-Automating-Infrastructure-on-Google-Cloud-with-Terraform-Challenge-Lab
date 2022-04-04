@@ -111,18 +111,18 @@ allow_stopping_for_update = true
 ```
 To import the first instance, use the following command, using the Instance ID for _tf-instance-1_ you copied down earlier.
 ```
-terraform import module.instances.google_compute_instance.tf-instance-1 <Instance ID - 1>
+terraform import module.instances.google_compute_instance.tf-instance-1 <FILL IN INSTANCE 1 ID>
 ```
 To import the second instance, use the following command, using the Instance ID for _tf-instance-2_ you copied down earlier.
 ```
-terraform import module.instances.google_compute_instance.tf-instance-2 <Instance ID - 2>
+terraform import module.instances.google_compute_instance.tf-instance-2 <FILL IN INSTANCE 2 ID>
 ```
 The two instances have now been imported into your terraform configuration. You can now run the commands to update the state of Terraform. Type _yes_ at the dialogue after you run the apply command to accept the state changes.
 ```
 terraform plan
 terraform apply
 ```
-**TASK 2: Configure a remote backend** <br/>
+<br/> **TASK 2: Configure a remote backend** <br/>
 Add the following code to the _modules/storage/storage.tf_ file, and fill in the _Bucket Name_:
 ```
 resource "google_storage_bucket" "storage-bucket" {
@@ -162,7 +162,7 @@ Run the following to initialize the remote backend. Type _yes_ at the prompt.
 ```
 terraform init
 ```
-**TASK 3: Modify and update infrastructure** <br/>
+<br/> ** TASK 3: Modify and update infrastructure ** <br/>
 Navigate to _modules/instances/instance.tf_. Replace the entire contents of the file with the following, and fill in your _Instance 3 ID_:
 ```
 resource "google_compute_instance" "tf-instance-1" {
@@ -254,7 +254,7 @@ Run the following commands to apply the changes. Type _yes_ at the prompt.
 ```
 terraform apply
 ```
-**TASK 5: Use a module from the Registry** <br/>
+<br/> ** TASK 5: Use a module from the Registry ** <br/>
 Copy and paste the following to the end of _main.tf_ file, fill in _Version Number_ and _Network Name_ instructed in the challenge:
 ```
 module "vpc" {
@@ -330,7 +330,7 @@ Run the following commands to initialize the module and update the instances. Ty
 terraform init
 terraform apply
 ```
-** TASK 6: Configure a firewall ** <br/>
+<br/> ** TASK 6: Configure a firewall ** <br/>
 Add the following resource to the _main.tf_ file, fill in the _GCP Project ID_ and _Network Name_:
 ```
 resource "google_compute_firewall" "tf-firewall" {
