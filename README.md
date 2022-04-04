@@ -62,7 +62,7 @@ Run "_terraform init_" in Cloud Shell in the root directory to initialize terraf
 ```
 terraform init
 ```
-**TASK 1: Import infrastructure** <br/>
+<br/> **TASK 1: Import infrastructure** <br/>
 Navigate to _Compute Engine > VM Instances_. Click on _tf-instance-1_. Copy the _Instance ID_ down somewhere to use later. <br/>
 Navigate to _Compute Engine > VM Instances_. Click on _tf-instance-2_. Copy the _Instance ID_ down somewhere to use later. <br/>
 Next, navigate to _modules/instances/instances.tf_. Copy the following configuration into the file:
@@ -345,4 +345,9 @@ resource "google_compute_firewall" "tf-firewall" {
   source_tags = ["web"]
   source_ranges = ["0.0.0.0/0"]
 }
+```
+Run the following commands to configure the firewall. Type _yes_ at the prompt.
+```
+terraform init
+terraform apply
 ```
