@@ -162,7 +162,7 @@ Run the following to initialize the remote backend. Type _yes_ at the prompt.
 ```
 terraform init
 ```
-<br/> ** TASK 3: Modify and update infrastructure ** <br/>
+<br/> **TASK 3: Modify and update infrastructure** <br/>
 Navigate to _modules/instances/instance.tf_. Replace the entire contents of the file with the following, and fill in your _Instance 3 ID_:
 ```
 resource "google_compute_instance" "tf-instance-1" {
@@ -221,7 +221,7 @@ Run the following commands to initialize the module and create/update the instan
 terraform init
 terraform apply
 ```
-**TASK 4: Taint and destroy resources** <br/>
+<br/> **TASK 4: Taint and destroy resources** <br/>
 Taint the _tf-instance-3_ resource by running the following command, and fill in your _Instance 3 ID_:
 ```
 terraform taint module.instances.google_compute_instance.<FILL IN INSTANCE 3 NAME>
@@ -254,7 +254,7 @@ Run the following commands to apply the changes. Type _yes_ at the prompt.
 ```
 terraform apply
 ```
-<br/> ** TASK 5: Use a module from the Registry ** <br/>
+<br/> **TASK 5: Use a module from the Registry** <br/>
 Copy and paste the following to the end of _main.tf_ file, fill in _Version Number_ and _Network Name_ instructed in the challenge:
 ```
 module "vpc" {
@@ -330,7 +330,7 @@ Run the following commands to initialize the module and update the instances. Ty
 terraform init
 terraform apply
 ```
-<br/> ** TASK 6: Configure a firewall ** <br/>
+<br/> **TASK 6: Configure a firewall** <br/>
 Add the following resource to the _main.tf_ file, fill in the _GCP Project ID_ and _Network Name_:
 ```
 resource "google_compute_firewall" "tf-firewall" {
