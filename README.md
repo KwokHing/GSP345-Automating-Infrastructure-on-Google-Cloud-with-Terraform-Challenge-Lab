@@ -1,8 +1,7 @@
-## Automating Infrastructure on Google Cloud with Terraform: Challenge Lab (GSP345)
+## Automating Infrastructure on Google Cloud with Terraform: Challenge Lab (GSP345) ##
 
-====================== Setup : Create the configuration files ======================
+Setup : Create the configuration files
 Make the empty files and directories in Cloud Shell or the Cloud Shell Editor.
-------------------------------------------------------------------------------------
 
 ```
 touch main.tf
