@@ -1,6 +1,6 @@
 ## Automating Infrastructure on Google Cloud with Terraform: Challenge Lab (GSP345) ##
 
-Setup : Create the configuration files <br/>
+**Setup : Create the configuration files** <br/>
 Make the empty files and directories in _Cloud Shell_ or the _Cloud Shell Editor_.
 
 ```
@@ -62,7 +62,7 @@ Run "_terraform init_" in Cloud Shell in the root directory to initialize terraf
 ```
 terraform init
 ```
-TASK 1: Import infrastructure <br/>
+**TASK 1: Import infrastructure** <br/>
 Navigate to _Compute Engine > VM Instances_. Click on _tf-instance-1_. Copy the _Instance ID_ down somewhere to use later. <br/>
 Navigate to _Compute Engine > VM Instances_. Click on _tf-instance-2_. Copy the _Instance ID_ down somewhere to use later. <br/>
 Next, navigate to _modules/instances/instances.tf_. Copy the following configuration into the file:
