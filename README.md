@@ -261,7 +261,7 @@ module "vpc" {
     source  = "terraform-google-modules/network/google"
     version = "~> <FILL IN VERSION NUMBER>"
 
-    project_id   = "qwiklabs-gcp-04-f2c1c01a09d3"
+    project_id   = var.project_id
     network_name = "<FILL IN NETWORK NAME>"
     routing_mode = "GLOBAL"
 
