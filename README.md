@@ -1,6 +1,6 @@
-## Automating Infrastructure on Google Cloud with Terraform: Challenge Lab (GSP345) ##
+## (GSP 345) Automating Infrastructure on Google Cloud with Terraform: Challenge Lab
 
-**Setup : Create the configuration files** <br/>
+**Task 1 : Create the configuration files** <br/>
 Make the empty files and directories in _Cloud Shell_ or the _Cloud Shell Editor_.
 
 ```
@@ -22,27 +22,27 @@ touch variables.tf
 cd
 ```
 
-Add the following to the each _variables.tf_ file, and fill in the _GCP Project ID_:
+Add the following to each of the _variables.tf_ files. Substitute with your project's specific **REGION**, **ZONE** and  **GCP PROJECT ID** values:
 ```
 variable "region" {
- default = "us-central1"
+ default = "<REGION>"
 }
 
 variable "zone" {
- default = "us-central1-a"
+ default = "<ZONE>"
 }
 
 variable "project_id" {
- default = "<FILL IN PROJECT ID>"
+ default = "<GCP PROJECT ID>"
 }
 ```
-Add the following to the _main.tf_ file:
+Find the latest version of the Terraform Google provider at https://registry.terraform.io/providers/hashicorp/google/latest/docs by clicking the _Use Provider_ button and add the following to the _main.tf_ file:
 ```
 terraform {
   required_providers {
     google = {
       source = "hashicorp/google"
-      version = "3.55.0"
+      version = "<LATEST VERSION>"
     }
   }
 }
@@ -58,75 +58,79 @@ module "instances" {
   source     = "./modules/instances"
 }
 ```
-Run "_terraform init_" in Cloud Shell in the root directory to initialize terraform.
+Run "_terraform init_" in Cloud Shell from the root directory to initialize terraform.
 ```
 terraform init
 ```
-<br/> **TASK 1: Import infrastructure** <br/>
-Navigate to _Compute Engine > VM Instances_. Click on _tf-instance-1_. Copy the _Instance ID_ down somewhere to use later. <br/>
-Navigate to _Compute Engine > VM Instances_. Click on _tf-instance-2_. Copy the _Instance ID_ down somewhere to use later. <br/>
-Next, navigate to _modules/instances/instances.tf_. Copy the following configuration into the file:
+<br/> **Task 2: Import infrastructure** <br/>
+Navigate to _Compute Engine > VM Instances_. Click on both instances and note the following values under the _Details_ tab: 
+
+ - **Instance ID**
+ - **Machine Type**
+ - **Boot Disk Image**
+
+Next, navigate to _modules/instances/instances.tf_. Copy the following configuration into the file and substitute the values were needed:
 ```
 resource "google_compute_instance" "tf-instance-1" {
   name         = "tf-instance-1"
-  machine_type = "n1-standard-1"
+  machine_type = "<MACHINE TYPE>"
 
   boot_disk {
     initialize_params {
-      image = "debian-cloud/debian-10"
+      image = "<BOOT DISK IMAGE>"
     }
   }
 
   network_interface {
- network = "default"
+    network = "default"
   }
 
-metadata_startup_script = <<-EOT
-#!/bin/bash
-EOT
+  metadata_startup_script = <<-EOT
+  #!/bin/bash
+  EOT
 
-allow_stopping_for_update = true
+  allow_stopping_for_update = true
 }
 
 resource "google_compute_instance" "tf-instance-2" {
   name         = "tf-instance-2"
-  machine_type = "n1-standard-1"
+  machine_type = "<MACHINE TYPE>"
 
   boot_disk {
     initialize_params {
-      image = "debian-cloud/debian-10"
+      image = "<BOOT DISK IMAGE>"
     }
   }
 
   network_interface {
- network = "default"
+    network = "default"
   }
 
-metadata_startup_script = <<-EOT
-#!/bin/bash
-EOT
+  metadata_startup_script = <<-EOT
+  #!/bin/bash
+  EOT
 
-allow_stopping_for_update = true
+  allow_stopping_for_update = true
 }
 ```
-To import the first instance, use the following command, using the Instance ID for _tf-instance-1_ you copied down earlier.
+To import the first instance, run the following command from the root directory using the Instance ID for _tf-instance-1_.
 ```
-terraform import module.instances.google_compute_instance.tf-instance-1 <FILL IN INSTANCE 1 ID>
+terraform import module.instances.google_compute_instance.tf-instance-1 <INSTANCE 1 ID>
 ```
-To import the second instance, use the following command, using the Instance ID for _tf-instance-2_ you copied down earlier.
+To import the first instance, run the following command from the root directory using the Instance ID for _tf-instance-2_.
 ```
-terraform import module.instances.google_compute_instance.tf-instance-2 <FILL IN INSTANCE 2 ID>
+terraform import module.instances.google_compute_instance.tf-instance-2 <INSTANCE 2 ID>
 ```
-The two instances have now been imported into your terraform configuration. You can now run the commands to update the state of Terraform. Type _yes_ at the dialogue after you run the apply command to accept the state changes.
+The two instances have now been imported into your terraform configuration. You can now run the commands from the root directory to update the state of Terraform. Type _yes_ at the dialogue after you run the apply command to accept the state changes.
 ```
 terraform plan
 terraform apply
 ```
-<br/> **TASK 2: Configure a remote backend** <br/>
-Add the following code to the _modules/storage/storage.tf_ file, and fill in the _Bucket Name_:
+<br/> **Task 3: Configure a remote backend** <br/>
+Add the following code to the _modules/storage/storage.tf_ file, and fill in the **Bucket Name** provided in the assignment:
 ```
 resource "google_storage_bucket" "storage-bucket" {
-  name          = "<FILL IN BUCKET NAME>"
+  name          = "<BUCKET NAME>"
   location      = "US"
   force_destroy = true
   uniform_bucket_level_access = true
@@ -138,143 +142,92 @@ module "storage" {
   source     = "./modules/storage"
 }
 ```
-Run the following commands to initialize the module and create the storage bucket resource. Type _yes_ at the dialogue after you run the apply command to accept the state changes.
+Run the following commands in the root directory to initialize the module and create the storage bucket resource. Type _yes_ at the dialogue after you run the apply command to accept the state changes.
 ```
 terraform init
 terraform apply
 ```
-Next, update the _main.tf_ file so that the terraform block looks like the following. Fill in your _GCP Project ID_ for the bucket argument definition.
+Next, update the _main.tf_ file so that the terraform block looks like the following. 
 ```
 terraform {
   backend "gcs" {
-    bucket  = "<FILL IN PROJECT ID>"
- prefix  = "terraform/state"
+    bucket  = "<BUCKET NAME>"
+    prefix  = "terraform/state"
   }
-  required_providers {
-    google = {
-      source = "hashicorp/google"
-      version = "3.55.0"
-    }
-  }
+  ...
 }
 ```
 Run the following to initialize the remote backend. Type _yes_ at the prompt.
 ```
 terraform init
 ```
-<br/> **TASK 3: Modify and update infrastructure** <br/>
-Navigate to _modules/instances/instance.tf_. Replace the entire contents of the file with the following, and fill in your _Instance 3 ID_:
+<br/> **Task 4: Modify and update infrastructure** <br/>
+Navigate to _modules/instances/instance.tf_. Modifiy the values in the existing instances as specified in the assignment then add a third instance:
 ```
 resource "google_compute_instance" "tf-instance-1" {
-  name         = "tf-instance-1"
-  machine_type = "n1-standard-2"
-  zone         = "us-central1-a"
-  allow_stopping_for_update = true
-
-  boot_disk {
-    initialize_params {
-      image = "debian-cloud/debian-10"
-    }
-  }
-
-  network_interface {
- network = "default"
-  }
+  machine_type = "<INSTANCE 1 MACHINE TYPE>"
+  ...
 }
 
 resource "google_compute_instance" "tf-instance-2" {
-  name         = "tf-instance-2"
-  machine_type = "n1-standard-2"
-  zone         = "us-central1-a"
-  allow_stopping_for_update = true
-
-  boot_disk {
-    initialize_params {
-      image = "debian-cloud/debian-10"
-    }
-  }
-
-  network_interface {
- network = "default"
-  }
+  machine_type = "<INSTANCE 2 MACHINE TYPE>"
+  ...
 }
 
-resource "google_compute_instance" "<FILL IN INSTANCE 3 NAME>" {
-  name         = "<FILL IN INSTANCE 3 NAME>"
-  machine_type = "n1-standard-2"
-  zone         = "us-central1-a"
+resource "google_compute_instance" "<INSTANCE 3 ID>" {
+  name         = "<INSTANCE 3 ID>"
+  machine_type = "<INSTANCE 3 MACHINE TYPE>"
+
   allow_stopping_for_update = true
 
   boot_disk {
     initialize_params {
-      image = "debian-cloud/debian-10"
+      image = "<BOOT DISK IMAGE>"
     }
   }
 
   network_interface {
- network = "default"
+   network = "default"
   }
 }
 ```
-Run the following commands to initialize the module and create/update the instance resources. Type _yes_ at the dialogue after you run the apply command to accept the state changes.
+Run the following commands from the root directory to initialize the module and create/update the instance resources. Type _yes_ at the dialogue after you run the apply command to accept the state changes.
 ```
 terraform init
 terraform apply
 ```
-<br/> **TASK 4: Taint and destroy resources** <br/>
-Taint the _tf-instance-3_ resource by running the following command, and fill in your _Instance 3 ID_:
+<br/> **Task 5: Destroy resources** <br/>
+Remove the newly added resource by deleting the following code chunk from _modules/instances/instance.tf_.
 ```
-terraform taint module.instances.google_compute_instance.<FILL IN INSTANCE 3 NAME>
-```
-Run the following commands to apply the changes:
-```
-terraform init
-terraform apply
-```
-Remove the _tf-instance-3_ resource from the _instances.tf_ file. Delete the following code chunk from the file.
-```
-resource "google_compute_instance" "<FILL IN INSTANCE 3 NAME>" {
-  name         = "<FILL IN INSTANCE 3 NAME>"
-  machine_type = "n1-standard-2"
-  zone         = "us-central1-a"
-  allow_stopping_for_update = true
-
-  boot_disk {
-    initialize_params {
-      image = "debian-cloud/debian-10"
-    }
-  }
-
-  network_interface {
- network = "default"
-  }
+resource "google_compute_instance" "<INSTANCE 3 ID>" {
+  ...
 }
 ```
-Run the following commands to apply the changes. Type _yes_ at the prompt.
+Run the following commands from the root directory to apply the changes. Type _yes_ at the prompt.
 ```
 terraform apply
 ```
-<br/> **TASK 5: Use a module from the Registry** <br/>
-Copy and paste the following to the end of _main.tf_ file, fill in _Version Number_ and _Network Name_ instructed in the challenge:
+<br/> **Task 6: Use a module from the Registry** <br/>
+Copy and paste the following to the end of _main.tf_ file, fill in _Version Number_, _Network Name_ and the subnet IP values instructed by the challenge:
 ```
 module "vpc" {
     source  = "terraform-google-modules/network/google"
-    version = "~> <FILL IN VERSION NUMBER>"
+    version = "~> <VERSION NUMBER>"
 
-    project_id   = "qwiklabs-gcp-04-f2c1c01a09d3"
-    network_name = "<FILL IN NETWORK NAME>"
+    project_id   = var.project_id
+    network_name = "<NETWORK NAME>"
     routing_mode = "GLOBAL"
 
     subnets = [
         {
             subnet_name           = "subnet-01"
-            subnet_ip             = "10.10.10.0/24"
-            subnet_region         = "us-central1"
+            subnet_ip             = "<SUBNET-01 IP>"
+            subnet_region         = var.region
         },
         {
             subnet_name           = "subnet-02"
-            subnet_ip             = "10.10.20.0/24"
-            subnet_region         = "us-central1"
+            subnet_ip             = "<SUBNET-02 IP>"
+            subnet_region         = var.region
             subnet_private_access = "true"
             subnet_flow_logs      = "true"
             description           = "This subnet has a description"
@@ -282,47 +235,29 @@ module "vpc" {
     ]
 }
 ```
-Run the following commands to initialize the module and create the VPC. Type _yes_ at the prompt.
+Run the following commands to initialize the module and create the VPC. Type _yes_ at the prompt. If there is an error with the version of the network provider then use the latest version number (found here: https://registry.terraform.io/modules/terraform-google-modules/network/google/latest) and re-run the commands.
 ```
 terraform init
 terraform apply
 ```
-Navigate to _modules/instances/instances.tf_. Replace the entire contents of the file with the following:
+Navigate to _modules/instances/instances.tf_ and update the instances with the following subnet values.
 ```
 resource "google_compute_instance" "tf-instance-1" {
-  name         = "tf-instance-1"
-  machine_type = "n1-standard-2"
-  zone         = "us-central1-a"
-  allow_stopping_for_update = true
-
-  boot_disk {
-    initialize_params {
-      image = "debian-cloud/debian-10"
-    }
-  }
-
+  ...
   network_interface {
- network = "<FILL IN NETWORK NAME>"
-    subnetwork = "subnet-01"
-  }
+    ...
+      subnetwork = "subnet-01"
+    }
+   ...
 }
 
-resource "google_compute_instance" "tf-instance-2" {
-  name         = "tf-instance-2"
-  machine_type = "n1-standard-2"
-  zone         = "us-central1-a"
-  allow_stopping_for_update = true
-
-  boot_disk {
-    initialize_params {
-      image = "debian-cloud/debian-10"
-    }
-  }
-
+resource "google_compute_instance" "tf-instance-1" {
+  ...
   network_interface {
- network = "<FILL IN NETWORK NAME>"
-    subnetwork = "subnet-02"
-  }
+    ...
+      subnetwork = "subnet-02"
+    }
+   ...
 }
 ```
 Run the following commands to initialize the module and update the instances. Type _yes_ at the prompt.
@@ -330,20 +265,18 @@ Run the following commands to initialize the module and update the instances. Ty
 terraform init
 terraform apply
 ```
-<br/> **TASK 6: Configure a firewall** <br/>
-Add the following resource to the _main.tf_ file, fill in the _GCP Project ID_ and _Network Name_:
+<br/> **Task 7: Configure a firewall** <br/>
+Add the following resource to the _main.tf_ file using the _Network Name_ from the assignment:
 ```
 resource "google_compute_firewall" "tf-firewall" {
-  name    = "tf-firewall"
- network = "projects/<FILL IN PROJECT_ID>/global/networks/<FILL IN NETWORK NAME>"
+    name    = "tf-firewall"
+    network = "projects/${var.project_id}/global/networks/<NETWORK NAME>"
 
-  allow {
-    protocol = "tcp"
-    ports    = ["80"]
-  }
-
-  source_tags = ["web"]
-  source_ranges = ["0.0.0.0/0"]
+    allow {
+        protocol = "tcp"
+        ports    = ["80"]
+    }
+    source_ranges = ["0.0.0.0/0"]
 }
 ```
 Run the following commands to configure the firewall. Type _yes_ at the prompt.
